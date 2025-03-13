@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter Article{% endblock %}
+
+{% block body %}
+    <h1>Ajouter Article</h1>
+
+    {{ form_start(form) }}
+        <div class="mb-3">
+            {{ form_label(form.nom, 'Nom') }}
+            {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.nom) }}
+        </div>
+        
+        <div class="mb-3">
+            {{ form_label(form.prix, 'Prix') }}
+            {{ form_widget(form.prix, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.prix) }}
+        </div>
+        
+        <button class="btn btn-primary">Créer</button>
+    {{ form_end(form) }}
+    
+    <!--<a href="{{ path('app_article_index') }}">Retour à la liste</a>-->
+{% endblock %}

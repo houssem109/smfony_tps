@@ -2,18 +2,18 @@
 
 namespace App\Controller;
 
+use App\Repository\ArticleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class IndexController extends AbstractController
 {
-    #[Route('/', name: 'app_home')]
-    public function home(): Response
+    #[Route('/', name: 'home')]
+    public function index(ArticleRepository $articleRepository): Response
     {
-        $articles = ['Article 1', 'Article 2', 'Article 3',"article 4"];
         return $this->render('article/index.html.twig', [
-            'articles' => $articles
+            'articles' => $articleRepository->findAll(),
         ]);
     }
-}   
+}
