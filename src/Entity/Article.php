@@ -16,12 +16,22 @@ class Article
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: "Le nom de l'article ne peut pas être vide")]
+    #[Assert\Length(
+        min: 5,
+        max: 50,
+        minMessage: "Le nom d'un article doit comporter au moins {{ limit }} caractères",
+        maxMessage: "Le nom d'un article ne peut pas dépasser {{ limit }} caractères"
+    )]
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    #[Assert\NotBlank]
-    #[Assert\Positive]
+    #[Assert\NotBlank(message: "Le prix de l'article ne peut pas être vide")]
+    #[Assert\Positive(message: "Le prix doit être positif")]
+    #[Assert\NotEqualTo(
+        value: 0,
+        message: "Le prix d'un article ne doit pas être égal à 0"
+    )]
     private ?string $prix = null;
 
     public function getId(): ?int
