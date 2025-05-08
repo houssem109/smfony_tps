@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+{% block title %}Liste des Articles{% endblock %}
+{% block body %}
+    {% if articles %}
+        <table id="articles" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prix</th>
+                    <th>Catégorie</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for article in articles %}
+                    <tr>
+                        <td>{{ article.nom }}</td>
+                        <td>{{ article.prix }}</td>
+                        <td>{{ article.category.titre }}</td>
+                        <td>
+                            <div style="display: flex; gap: 10px;">
+                                <a href="{{ path('app_article_show', {'id': article.id}) }}" class="btn btn-dark btn-sm me-2">Détails</a>
+                                <a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-dark btn-sm me-2">Modifier</a>
+                                <form method="post" action="{{ path('app_article_delete', {'id': article.id}) }}" onsubmit="return confirm('Etes-vous sûr de supprimer cet article?');" class="m-0">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ article.id) }}">
+                                    <button class="btn btn-danger btn-sm">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Aucun articles</p>
+    {% endif %}
+    <a href="{{ path('app_article_new') }}" class="btn btn-dark mt-3">Créer un nouvel article</a>
+{% endblock %}

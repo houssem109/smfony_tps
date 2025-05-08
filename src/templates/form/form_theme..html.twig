@@ -1,0 +1,12 @@
+{% extends 'bootstrap_4_layout.html.twig' %}
+
+{# Just change the color of error messages to red #}
+{% block form_errors %}
+    {% if errors|length > 0 %}
+        <ul class="list-unstyled mb-0">
+            {% for error in errors %}
+                <li><span style="color: #dc3545;">• {{ error.message }}</span></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock form_errors %}

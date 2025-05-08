@@ -95,3 +95,25 @@ RUN set -eux; \
 	composer dump-env prod; \
 	composer run-script --no-dev post-install-cmd; \
 	chmod +x bin/console; sync;
+
+
+
+
+
+
+
+	RUN apt-get update && \
+    # Installer les outils de base
+    apt-get install -y curl gnupg libpq-dev && \
+    # Ajouter le dépôt PostgreSQL
+    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/postgresql.gpg] http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    # Mettre à jour et installer les dépendances
+    apt-get update && \
+    apt-get install -y postgresql-client-16 && \
+    # Installer les extensions PHP
+    docker-php-ext-install pdo pdo_pgsql && \
+    docker-php-ext-enable pdo_pgsql && \
+    # Nettoyer le cache
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+	RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
