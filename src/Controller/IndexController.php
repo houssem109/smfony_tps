@@ -1,7 +1,12 @@
 <?php
 
 namespace App\Controller;
-
+use App\Entity\CategorySearch;
+use App\Entity\PriceSearch;
+use App\Form\CategorySearchType;
+use App\Form\PriceSearchType;
+use App\Entity\PropertySearch;
+use App\Form\PropertySearchType;
 use App\Entity\Article;
 use App\Entity\Category;
 use App\Form\ArticleType;
@@ -23,13 +28,26 @@ class IndexController extends AbstractController
     }
 
     #[Route('/article', name: 'app_article_index', methods: ['GET'])]
-    public function index(ArticleRepository $articleRepository): Response
+    public function index(Request $request, ArticleRepository $articleRepository): Response
     {
+        $search = new PropertySearch();
+        $form = $this->createForm(PropertySearchType::class, $search);
+        $form->handleRequest($request);
+    
+        $articles = $articleRepository->findAll(); // Default to all articles
+    
+        if ($form->isSubmitted() && $form->isValid()) {
+            $nom = $search->getNom();
+            if ($nom) {
+                $articles = $articleRepository->findByNom($nom); // Custom repository method
+            }
+        }
+    
         return $this->render('articles/index.html.twig', [
-            'articles' => $articleRepository->findAll(),
+            'articles' => $articles,
+            'form' => $form->createView(),
         ]);
     }
-
    
     #[Route('/article/new', name: 'app_article_new', methods: ['GET', 'POST'])]
 public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -130,6 +148,47 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
     {
         return $this->render('articles/categories.html.twig', [
             'categories' => $categoryRepository->findAll(),
+        ]);
+    }
+    #[Route('/article/search/category', name: 'app_article_search_category', methods: ['GET'])]
+    public function searchByCategory(Request $request, ArticleRepository $articleRepository): Response
+    {
+        $search = new CategorySearch();
+        $form = $this->createForm(CategorySearchType::class, $search);
+        $form->handleRequest($request);
+
+        $articles = $articleRepository->findAll();
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $category = $search->getCategory();
+            if ($category) {
+                $articles = $articleRepository->findBy(['category' => $category]);
+            }
+        }
+
+        return $this->render('articles/search_by_category.html.twig', [
+            'form' => $form->createView(),
+            'articles' => $articles,
+        ]);
+    }
+    #[Route('/article/search/price', name: 'app_article_search_price', methods: ['GET'])]
+    public function searchByPrice(Request $request, ArticleRepository $articleRepository): Response
+    {
+        $search = new PriceSearch();
+        $form = $this->createForm(PriceSearchType::class, $search);
+        $form->handleRequest($request);
+
+        $articles = $articleRepository->findAll();
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $minPrice = $search->getMinPrice();
+            $maxPrice = $search->getMaxPrice();
+            $articles = $articleRepository->findByPriceRange($minPrice, $maxPrice);
+        }
+
+        return $this->render('articles/search_by_price.html.twig', [
+            'form' => $form->createView(),
+            'articles' => $articles,
         ]);
     }
 }

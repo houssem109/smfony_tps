@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% block title %}Recherche par Catégorie{% endblock %}
+{% block body %}
+    <h1>Recherche d'articles par catégorie</h1>
+
+    {{ form_start(form) }}
+        <div class="form-row align-items-end">
+            <div class="col">
+                {{ form_row(form.category) }}
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-success">Rechercher</button>
+            </div>
+        </div>
+    {{ form_end(form) }}
+
+    {% if articles|length > 0 %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prix</th>
+                    <th>Catégorie</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for article in articles %}
+                    <tr>
+                        <td>{{ article.nom }}</td>
+                        <td>{{ article.prix }}</td>
+                        <td>{{ article.category.titre }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Aucun articles trouvés.</p>
+    {% endif %}
+{% endblock %}
